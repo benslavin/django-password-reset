@@ -73,18 +73,15 @@ class PasswordRecoveryForm(forms.Form):
         key = key % '' if self.case_sensitive else key % 'i'
         f = lambda field: Q(**{field + key: username})
         filters = f('username') | f('email')
+        user = None
         try:
-            user_model.objects.get(filters)
+            user = user_model.objects.get(filters)
         except user_model.DoesNotExist:
             if self.fail_noexistent_user:
                 raise forms.ValidationError(_("Sorry, this user doesn't exist."))
-            else:
-                user = None
         except user_model.MultipleObjectsReturned:
             if self.fail_noexistent_user:
                 raise forms.ValidationError(_("Unable to find user."))
-            else:
-                user = None
         return user
 
 
